@@ -1,5 +1,5 @@
 import { UserI, UserRoleT, UserRoleRusT } from "@/interfaces/UserManagementI";
-import { useUserStore } from "@/stores/UserStore";
+import store, { useUserStore } from "@/stores/UserStore";
 import { computed, defineComponent, getCurrentInstance, onMounted, onUnmounted, reactive } from "vue";
 import { vMaska } from "maska"
 
@@ -34,8 +34,12 @@ export default defineComponent({
         const RoleRusT = UserRoleRusT;
         const InputT = InputTypesT;
         const state: ModalCreateUserState = reactive({
-            user: userStore.edit_user_id ? userStore.users[userStore.edit_user_id] : vEmptyUser,
-            phone_masked: '',
+            user: userStore.edit_user_id 
+                ? {... userStore.users[userStore.edit_user_id]} 
+                : {...vEmptyUser},
+            phone_masked: userStore.edit_user_id
+                ? String(userStore.users[userStore.edit_user_id]?.phone_number)
+                : '',
             validation_fields: { role: true },
         });
 
@@ -43,19 +47,15 @@ export default defineComponent({
         const bAllFieldsValid = computed<boolean>(() => {
             let bFieldsValid = true;
             for (const key of Object.values(InputT)){
-                console.log(key);
                 
                 const isValid = state.validation_fields[key];
                 if (key === InputT.phone_number){
                     if (!isValid && state.user.role === UserRoleT.manager){
                         bFieldsValid = false;
-                        console.log(key, 'invalid');
-
                         break
                     }
                 } else if (!isValid){
                     bFieldsValid = false;
-                    console.log(key, 'invalid');
                     break
                 }
             }
@@ -90,7 +90,7 @@ export default defineComponent({
         function fValidateText(sText: string, sInputAlias: string){
             const reg = /^[a-zA-Zа-яА-Я]+$/;
             const sTextTrimmed = sText.trim();
-            const isValid = reg.test(sTextTrimmed) && sTextTrimmed.length > 2;
+            const isValid = reg.test(sTextTrimmed) && sTextTrimmed.length > 1;
             state.validation_fields[sInputAlias] = isValid;
         }
 
@@ -104,19 +104,32 @@ export default defineComponent({
             }
             return isValidNumber
         }
+        
+        function fValidateAll(){
+            fValidateNumber();
+            fValidateText(state.user.first_name, InputT.first_name);
+            fValidateText(state.user.second_name, InputT.second_name);
+        }
 
         function fSaveUser(){
-            const isValidNumber = fValidateNumber();
-            console.log(bAllFieldsValid.value);
+            fValidateAll();
             
             if (bAllFieldsValid.value){
                 const vUser: UserI = state.user;
-                if (bEditMode.value){
-                    vUser.id = Object.values(userStore.users).length;
+                const sNameLow = vUser.first_name.toLowerCase();
+                const sSecondNameLow = vUser.second_name.toLowerCase();
+                vUser.first_name = sNameLow.charAt(0).toUpperCase() + sNameLow.slice(1);
+                vUser.second_name = sSecondNameLow.charAt(0).toUpperCase() + sSecondNameLow.slice(1);
+                
+                if (!bEditMode.value){
+                    vUser.id = Object.values(userStore.users).length + 1;
                 }
+
                 userStore.users[vUser.id] = vUser;
+                fCloseModal();
             }
         }
+
 
         onMounted(() => {
             /** Отключение скролла на времяпоказа модалки */
@@ -126,6 +139,8 @@ export default defineComponent({
         onUnmounted(() => {
             /** Возврат скролла */
             document.body.classList.remove('disable-scroll');
+            /** Сброс данных */
+            userStore.edit_user_id
         })
 
         return {

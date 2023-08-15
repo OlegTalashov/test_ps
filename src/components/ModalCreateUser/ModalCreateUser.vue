@@ -7,35 +7,14 @@
                 <button @click.stop="fCloseModal" class="btn btn-close">
                     <i class="icon-close" />
                 </button>
-                <p class="modal-title">{{ `${bEditMode ? 'Редактировать' : 'Добавить'} пользователя` }}</p>
+                <p class="modal-title">{{ `${bEditMode ? 'Редактировать' : 'Добавить'}` }}<br> пользователя </p>
             </div>
             <div class="modal-content">
                 <div class="input-row">
                     <input 
-                        v-model="state.user.second_name"
-                        @keydown.enter="fNextField('inputFirstName')"
-                        @focus="fSelectOnFocus"
-                        @blur="fValidateText(state.user.second_name, InputT.second_name)"
-                        @input="
-                            state.validation_fields[InputT.second_name] === false 
-                            ? fValidateText(state.user.second_name, InputT.second_name)
-                            : null
-                        "
-                        :class="{'has-error': state.validation_fields[InputT.second_name] === false }"
-                        class="input-field"
-                        ref="inputSecondName"
-                        placeholder="Фамилия"
-                        type="text"
-                        >
-                    <div v-if="state.validation_fields[InputT.second_name] === false" class="error">
-                        Некорректрое значение
-                    </div>
-                </div>
-                <div class="input-row">
-                    <input 
                         v-model="state.user.first_name"
                         @focus="fSelectOnFocus"
-                        @keydown.enter="fNextField('inputRole')"
+                        @keydown.enter="fNextField('inputSecondName')"
                         @blur="fValidateText(state.user.first_name, InputT.first_name)"
                         @input="
                             state.validation_fields[InputT.first_name] === false
@@ -54,10 +33,32 @@
                     </div>
                 </div>
                 <div class="input-row">
+                    <input 
+                        v-model="state.user.second_name"
+                        @keydown.enter="fNextField('inputRole')"
+                        @focus="fSelectOnFocus"
+                        @blur="fValidateText(state.user.second_name, InputT.second_name)"
+                        @input="
+                            state.validation_fields[InputT.second_name] === false 
+                            ? fValidateText(state.user.second_name, InputT.second_name)
+                            : null
+                        "
+                        :class="{'has-error': state.validation_fields[InputT.second_name] === false }"
+                        class="input-field"
+                        ref="inputSecondName"
+                        placeholder="Фамилия"
+                        type="text"
+                        >
+                    <div v-if="state.validation_fields[InputT.second_name] === false" class="error">
+                        Некорректрое значение
+                    </div>
+                </div>
+                <div class="input-row">
                     <select 
                         v-model="state.user.role"
                         @focus="fOpenSelect($event)"
                         @change="fNextField('inputNumber')"
+                        :disabled="bEditMode"
                         class="input-field"
                         ref="inputRole"
                         placeholder="Должность"
@@ -75,7 +76,7 @@
                         v-model="state.phone_masked"
                         @blur="fValidateNumber"
                         @input="
-                            state.validation_fields[InputT.phone_number] === false 
+                            state.validation_fields[InputT.phone_number] === false
                             ? fValidateNumber
                             : null
                         "
@@ -92,10 +93,6 @@
                 <button
                     @click="fSaveUser"
                     class="btn-confirm"
-                    :class="{
-                        'btn-confirm-disabled': !bAllFieldsValid
-                    }" 
-                    :disabled="!bAllFieldsValid"
                 >
                     {{ bEditMode ? 'Изменить' : 'Создать' }}
                 </button>
@@ -124,7 +121,7 @@
         .modal-header{
             position: relative;
             text-align: center;
-            min-height: 50px;
+            min-height: 65px;
             display: flex;
             .modal-title{
                 font-size: 18px;
@@ -163,6 +160,8 @@
             }
             .has-error{
                 border-color: red;
+                accent-color: red !important;
+
                 &:focus{
                     outline-color: red;
                 }
@@ -188,12 +187,6 @@
             user-select: none;
             &:hover{
                 background-color: #2a65d3;
-            }
-            &-disabled{
-                background-color: #6692e4;
-                &:hover{
-                    background-color: #6692e4;
-                }
             }
         }
         .btn-close{

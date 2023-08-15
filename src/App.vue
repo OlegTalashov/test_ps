@@ -30,17 +30,20 @@ export default defineComponent({
 
 <style lang="scss" scoped>
     .page{
-        width: 100vw;
-        height: 100vh;
+        width: 100%;
+        height: 100%;
         display: flex;
         flex-direction: column;
+        position: relative;
         .content {
             width: 100%;
             max-width: 1080px;
             margin: 0 auto;
+            position: relative;
         }
     }
     .user-list{
+        position: relative;
         margin-top: 40px;
     }
 </style>

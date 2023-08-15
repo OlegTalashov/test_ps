@@ -17,10 +17,21 @@ export default defineComponent({
             userStore.modal_create_user_displayed = true;
         }
 
+        function fEditUser(idUser: number){
+            userStore.edit_user_id = idUser;
+            fOpenModalCreateUser();
+        }
+
+        function fDeleteUser(idUser: number){
+            delete userStore.users[idUser];
+        }
+
         return {
             userStore,
             state,
             fOpenModalCreateUser,
+            fEditUser,
+            fDeleteUser
         };
     }
 });
