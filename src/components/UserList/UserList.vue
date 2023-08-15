@@ -14,8 +14,8 @@
         <ul class="list-users">
             <li v-for="user in userStore.users" :key="user.id" class="one-row">
                 <div class="name-field">
-                    <span>{{ user.first_name }}</span>
-                    <span v-if="state.bShowSecondName">&nbsp;{{ user.second_name }}</span>
+                    <span>{{ user.first_name }}&nbsp;</span>
+                    <span v-if="state.bShowSecondName">{{ user.second_name }}</span>
                 </div>
                 <div class="btn-container">
                     <button @click="fEditUser(user.id)" class="btn">
@@ -82,6 +82,9 @@
         .name-field{
             font-size: 18px;
             margin: auto 0;
+            display: inline-flex;
+            flex-wrap: wrap;
+            word-wrap: anywhere;
         }
         .btn-container{
             display: inline-flex;
