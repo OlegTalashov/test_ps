@@ -93,7 +93,7 @@
             background-color: #f4f4f4;
             border-bottom: 1px solid rgba(0, 0, 0, 0.2);
             transition: background-color 0.2s ease-in-out;
-            transition: border 0.3s ease-out;
+            transition: border 0.1s ease-out;
 
             &:hover:not(:focus) {
                 background-color: #eeeeee;
@@ -112,7 +112,7 @@
             &:focus {
                 outline: none;
                 background-color: #dddddd;
-                border-bottom: 2px solid rgba(0, 0, 0, 1);
+                border-bottom: 2px solid rgb(0, 0, 0);
                 background-position: 0 50%;
                 &~.textarea-fade{
                     background: linear-gradient(to bottom,

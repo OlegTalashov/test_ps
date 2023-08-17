@@ -11,7 +11,7 @@
                     2
                 </span>
             </div>
-            <div class="page-one" v-if="state.bShowFirstTask">
+            <div class="page-content" v-if="state.bShowFirstTask">
                 <UserList class="user-list" />
                 <transition name="fade">
                     <ModalCreateUser v-if="userStore.modal_create_user_displayed" />
@@ -20,7 +20,7 @@
                     <ModalEditAvatar v-if="userStore.edit_avatar_id"/>
                 </transition>
             </div>
-            <div v-else>
+            <div class="page-content" v-else>
                 <TextareaComponent
                     class="textarea-comp"
                     label="Custom textarea"
@@ -77,8 +77,9 @@ export default defineComponent({
             margin: 0 auto;
             position: relative;
         }
-        .page-one{
+        .page-content{
             position: relative;
+            display: flex;
             width: 100%;
             height: 100%;
         }
@@ -115,7 +116,9 @@ export default defineComponent({
     .textarea-comp{
         position: relative;
         width: 600px;
-        height: 120px;
+        height: fit-content;
+        min-height: 120px;
+        margin: 30px auto;
     }
     .fade-enter-active,
     .fade-leave-active {
