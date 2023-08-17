@@ -1,5 +1,5 @@
 import { useUserStore } from "@/stores/UserStore";
-import { defineComponent, reactive, computed, ref } from "vue";
+import { defineComponent, reactive, computed } from "vue";
 
 export default defineComponent({
     setup() {

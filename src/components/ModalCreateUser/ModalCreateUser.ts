@@ -1,5 +1,5 @@
-import { UserI, UserRoleT, UserRoleRusT } from "@/interfaces/UserManagementI";
-import store, { useUserStore } from "@/stores/UserStore";
+import { UserI, UserRoleT, UserRoleRusT, UserAvatarI } from "@/interfaces/UserManagementI";
+import { useUserStore } from "@/stores/UserStore";
 import { computed, defineComponent, getCurrentInstance, onMounted, onUnmounted, reactive } from "vue";
 import { vMaska } from "maska"
 
@@ -27,7 +27,7 @@ interface ModalCreateUserState {
 export default defineComponent({
     directives: { maska: vMaska },
     setup(){
-        const vm = getCurrentInstance()
+        const vm = getCurrentInstance();
         /** Хранилище Pinia */
         const userStore = useUserStore();
         const RoleT = UserRoleT;
@@ -44,6 +44,8 @@ export default defineComponent({
         });
 
         const bEditMode = computed<boolean>(() => Boolean(userStore.edit_user_id));
+        const sAvatarImgSrc = computed<boolean>(() => Boolean(userStore.edit_user_id));
+
         const bAllFieldsValid = computed<boolean>(() => {
             let bFieldsValid = true;
             for (const key of Object.values(InputT)){
@@ -76,6 +78,23 @@ export default defineComponent({
             e.preventDefault()
             const elTarget = e.target as HTMLSelectElement;
             elTarget.click();
+        }
+
+        /** Загрузить изображение */
+        function fUploadImage(e: Event){
+            const elTarget = e.target as HTMLInputElement;
+            if (elTarget.files?.length){
+                const imgUrl = URL.createObjectURL(elTarget.files[0]);
+                const idImg = Object.keys(userStore.user_avatars).length + 1;
+                const vImageData: UserAvatarI = {
+                    img_id: idImg,
+                    img_url: imgUrl,
+                }
+                elTarget.value = '';
+                state.user.avatar_img_id = idImg;
+                userStore.user_avatars[idImg] = vImageData;
+                userStore.edit_avatar_id = idImg;
+            }
         }
 
         function fNextField(ref: string){
@@ -130,6 +149,11 @@ export default defineComponent({
             }
         }
 
+        function fOpenModalEditImg(){
+            if (state.user.avatar_img_id){
+                userStore.edit_avatar_id = state.user.avatar_img_id;
+            }
+        }
 
         onMounted(() => {
             /** Отключение скролла на времяпоказа модалки */
@@ -147,6 +171,7 @@ export default defineComponent({
             userStore,
             state,
             bEditMode,
+            sAvatarImgSrc,
             bAllFieldsValid,
             RoleT,
             RoleRusT,
@@ -155,8 +180,10 @@ export default defineComponent({
             fNextField,
             fSelectOnFocus,
             fOpenSelect,
+            fUploadImage,
             fValidateText,
             fValidateNumber,
+            fOpenModalEditImg,
             fSaveUser,
         };
     },

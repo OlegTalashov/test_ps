@@ -10,6 +10,37 @@
                 <p class="modal-title">{{ `${bEditMode ? 'Редактировать' : 'Добавить'}` }}<br> пользователя </p>
             </div>
             <div class="modal-content">
+                <div class="avatar-container">
+                    <input
+                        @change="fUploadImage($event)"
+                        title="Загрузить изображение"
+                        id="input-image"
+                        class="input-image"
+                        accept="image/*"
+                        type="file"
+                    >
+                    <label for="input-image"
+                        v-if="!state.user.avatar_img_id"
+                        class="avatar avatar-plug"
+                    >
+                        <i class="edit-icon" />
+                    </label>
+                    <div
+                        v-else
+                        @click="fOpenModalEditImg"
+                        :style="{
+                            'background-image': `url(${
+                                userStore.user_avatars[state.user.avatar_img_id].img_sm_url
+                                ?? userStore.user_avatars[state.user.avatar_img_id].img_url
+                            })`
+                        }"
+                        :src="userStore.user_avatars[state.user.avatar_img_id].img_url"
+                        class="avatar"
+                    >
+                        <i class="edit-icon" />
+                    </div>
+                    
+                </div>
                 <div class="input-row">
                     <input 
                         v-model="state.user.first_name"
@@ -112,6 +143,7 @@
         background: rgba(0, 0, 0, 0.5);
         cursor: pointer;
         .modal-body{
+            cursor: auto;
             margin: auto;
             background-color: #ffffff;
             min-width: 320px;
@@ -132,6 +164,43 @@
             display: flex;
             position: relative;
             flex-direction: column;
+
+            .avatar-container{
+                width: 100%;
+                display: flex;
+                height: 98px;
+                .input-image{
+                    display: none;
+                }
+                .avatar{
+                    cursor: pointer;
+                    overflow: visible;
+                    position: relative;
+                    height: 80px;
+                    width: 80px;
+                    margin: 8px auto;
+                    border: 1px solid #2a64d5;
+                    box-shadow: inset 0 0 10px #134197;
+                    border-radius: 50%;
+                    background-size: cover;
+                    &:hover{
+                        box-shadow: inset 0 0 20px #134197;
+                    }&-plug{
+                        background-image: url('../../assets/images/avatar-plug.png');
+                    }
+                }
+                .edit-icon{
+                    display: block;
+                    height: 40px;
+                    width: 40px;
+                    position: absolute;
+                    right: -10px;
+                    top: 40px;
+                    background-image: url('../../assets/icons/edit.svg');
+                    background-size: contain;
+                    opacity: 0.9;
+                }
+            }
 
             .input-row{
                 width: 100%;
