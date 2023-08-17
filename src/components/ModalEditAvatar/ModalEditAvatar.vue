@@ -81,11 +81,11 @@
             padding: 10px;
         }
         .img-container{
-            box-sizing: border-box;
+            
             position: relative;
             overflow: hidden;
             .image{
-                box-sizing: border-box;
+                
                 max-height: 80vh;
                 max-width: 80vw;
                 height: auto;
@@ -103,7 +103,7 @@
                 border-radius: 50%;
                 box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.5);
                 user-select: none;
-                box-sizing: border-box;
+                
 
                 .crop-center{
                     height: 100%;
@@ -119,7 +119,7 @@
             display: none;
         }
         .footer{
-            box-sizing: border-box;
+            
         }
         .range{
             min-width: 300px;
@@ -137,7 +137,7 @@
                 background-color: #dab200;
                 display: flex;
                 align-items: center;
-                box-sizing: border-box;
+                
                 max-height: 41px;
                 margin: auto 0;
                 &:hover{

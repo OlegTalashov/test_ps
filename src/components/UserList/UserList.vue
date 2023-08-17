@@ -2,47 +2,52 @@
 
 <template>
     <div>
-        <div class="filters">
-            <button @click="fOpenModalCreateUser" class="btn-add-user">
-                Добавить пользователя
-            </button>
-            <div class="check-container">
-                <input v-model="state.bShowSecondName" type="checkbox" id="secondName" name="scales" />
-                <label for="secondName">Показывать фамилии</label>
+        <div>
+            <div class="filters">
+                <button @click="fOpenModalCreateUser" class="btn-add-user">
+                    Добавить пользователя
+                </button>
+                <div class="check-container">
+                    <input v-model="state.bShowSecondName" type="checkbox" id="secondName" name="scales" />
+                    <label for="secondName">Показывать фамилии</label>
+                </div>
             </div>
+            <div v-if="!Object.keys(userStore.users).length" class="list-users">
+                <h2 class="no-users">Здесь никого нет...</h2>
+            </div>
+            <ul class="list-users">
+                <li v-for="user in userStore.users" :key="user.id" class="one-row">
+                    <div class="avatar-container">
+                        <img 
+                            v-if="user.avatar_img_id"
+                            class="avatar"
+                            :src="userStore.user_avatars[user.avatar_img_id]?.img_sm_url
+                                ? userStore.user_avatars[user.avatar_img_id].img_sm_url
+                                : userStore.user_avatars[user.avatar_img_id].img_url"
+                            alt="avatar"
+                        >
+                        <img 
+                            v-else
+                            class="avatar"
+                            src="../../assets/images/avatar-plug.png"
+                            alt="avatar"
+                        >
+                    </div>
+                    <div class="name-field">
+                        <span>{{ user.first_name }}&nbsp;</span>
+                        <span v-if="state.bShowSecondName">{{ user.second_name }}</span>
+                    </div>
+                    <div class="btn-container">
+                        <button @click="fEditUser(user.id)" class="btn">
+                            <i class="icon icon-edit" />
+                        </button>
+                        <button @click="fDeleteUser(user.id)" class="btn">
+                            <i class="icon icon-trash" />
+                        </button>
+                    </div>
+                </li>
+            </ul>
         </div>
-        <ul class="list-users">
-            <li v-for="user in userStore.users" :key="user.id" class="one-row">
-                <div class="avatar-container">
-                    <img 
-                        v-if="user.avatar_img_id"
-                        class="avatar"
-                        :src="userStore.user_avatars[user.avatar_img_id]?.img_sm_url
-                            ? userStore.user_avatars[user.avatar_img_id].img_sm_url
-                            : userStore.user_avatars[user.avatar_img_id].img_url"
-                        alt="avatar"
-                    >
-                    <img 
-                        v-else
-                        class="avatar"
-                        src="../../assets/images/avatar-plug.png"
-                        alt="avatar"
-                    >
-                </div>
-                <div class="name-field">
-                    <span>{{ user.first_name }}&nbsp;</span>
-                    <span v-if="state.bShowSecondName">{{ user.second_name }}</span>
-                </div>
-                <div class="btn-container">
-                    <button @click="fEditUser(user.id)" class="btn">
-                        <i class="icon icon-edit" />
-                    </button>
-                    <button @click="fDeleteUser(user.id)" class="btn">
-                        <i class="icon icon-trash" />
-                    </button>
-                </div>
-            </li>
-        </ul>
     </div>
 </template>
 
@@ -88,6 +93,12 @@
     .list-users{
         display: flex;
         flex-direction: column;
+        .no-users{
+            margin: 50px auto;
+            color: #adaeb1;
+            font-weight: 500;
+            user-select: none;
+        }
         .one-row{
             display: inline-flex;
             flex-wrap: nowrap;
@@ -102,9 +113,10 @@
             .avatar{
                 width: 80px;
                 height: 80px;
-                border-radius: 50%;
-                border: 1px solid #0f4fca;
                 margin: auto;
+                border-radius: 50%;
+                border: 1px solid #2a64d5;
+                box-shadow: inset 0 0 10px #134197;
             }
         }
         .name-field{
