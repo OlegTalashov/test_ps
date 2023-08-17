@@ -9,7 +9,6 @@
                     ref="wrapper"
                     :style="{
                         height: state.visible_img_params.height ? `${state.visible_img_params.height}px` : 'fit-content',
-                        with: state.visible_img_params.width ? `${state.visible_img_params.width}px` : 'fit-content'
                     }"
                 >
                     <img class="image" ref="image" draggable="false" :src="state.image_local.img_url">
@@ -19,8 +18,8 @@
                         :style="{
                             top: `${state.crop_position.y}px`,
                             left: `${state.crop_position.x}px`,
-                            height: `${state.crop_position.size}px`,
-                            width: `${state.crop_position.size}px`
+                            height: `${state.crop_size}px`,
+                            width: `${state.crop_size}px`
                         }"
                     >
                         <div 
@@ -33,15 +32,30 @@
                 </div>
                 <div class="footer">
                     <input
-                        @change="fUploadImage($event)"
-                        title="Загрузить изображение"
-                        id="input-new"
-                        class="input-image"
-                        accept="image/*"
-                        type="file"
+                        v-model="state.crop_size"
+                        id="crop-size" 
+                        class="range"
+                        type="range"
+                        step="5"
+                        min="80"
+                        :max="state.visible_img_params.height > state.visible_img_params.width
+                            ? state.visible_img_params.width
+                            : state.visible_img_params.height
+                        "
                     >
-                    <label class="btn btn-input" for="input-new">Загрузить изображекние</label>
-                    <button class="btn btn-save" @click="fCrop">Сохранить</button>
+                    {{ state.crop_size }}
+                    <div class="buttons">
+                        <input
+                            @change="fUploadImage($event)"
+                            title="Загрузить изображение"
+                            id="input-new"
+                            class="input-image"
+                            accept="image/*"
+                            type="file"
+                        >
+                        <label class="btn btn-input" for="input-new">Загрузить изображекние</label>
+                        <button class="btn btn-save" @click="fCrop">Сохранить</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -83,7 +97,7 @@
                 position: absolute;
                 overflow: hidden;
                 overflow: auto;
-                cursor: e-resize;
+                cursor: pointer;
                 border: 2px solid rgb(0, 0, 0);
                 padding: 20px;
                 border-radius: 50%;
@@ -98,12 +112,18 @@
                 }
             }
         }
+        .buttons{
+            display: flex;
+        }
         .input-image{
             display: none;
         }
         .footer{
             box-sizing: border-box;
-            display: flex;
+        }
+        .range{
+            min-width: 300px;
+            padding: 10px 0;
         }
         .btn{
             font-size: 18px;

@@ -13,6 +13,22 @@
         </div>
         <ul class="list-users">
             <li v-for="user in userStore.users" :key="user.id" class="one-row">
+                <div class="avatar-container">
+                    <img 
+                        v-if="user.avatar_img_id"
+                        class="avatar"
+                        :src="userStore.user_avatars[user.avatar_img_id]?.img_sm_url
+                            ? userStore.user_avatars[user.avatar_img_id].img_sm_url
+                            : userStore.user_avatars[user.avatar_img_id].img_url"
+                        alt="avatar"
+                    >
+                    <img 
+                        v-else
+                        class="avatar"
+                        src="../../assets/images/avatar-plug.png"
+                        alt="avatar"
+                    >
+                </div>
                 <div class="name-field">
                     <span>{{ user.first_name }}&nbsp;</span>
                     <span v-if="state.bShowSecondName">{{ user.second_name }}</span>
@@ -78,6 +94,18 @@
             border-bottom: 1px solid #d9d9d9;
             padding: 10px 0;
             min-height: 30px;
+        }
+        .avatar-container{
+            width: 100px;
+            height: 100px;
+            display: flex;
+            .avatar{
+                width: 80px;
+                height: 80px;
+                border-radius: 50%;
+                border: 1px solid #0f4fca;
+                margin: auto;
+            }
         }
         .name-field{
             font-size: 18px;

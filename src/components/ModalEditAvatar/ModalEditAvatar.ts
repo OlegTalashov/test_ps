@@ -5,7 +5,6 @@ import { defineComponent, reactive, computed, getCurrentInstance, onMounted, onU
 interface CropI {
     x: number,
     y: number,
-    size: number
 }
 
 interface MousePointI {
@@ -21,6 +20,7 @@ interface ImgParamsI {
 interface ModalEditAvatarState {
     image_local: UserAvatarI,
     crop_position: CropI,
+    crop_size: number,
     visible_img_params: ImgParamsI,
     img_diff: number,
     start_move_point: MousePointI | null
@@ -33,10 +33,10 @@ export default defineComponent({
         const userStore = useUserStore();
         const state: ModalEditAvatarState = reactive({
             image_local: { ...userStore.user_avatars[userStore.edit_avatar_id] },
+            crop_size: 80,
             crop_position: {
                 x: 0,
                 y: 0,
-                size: 200
             },
             visible_img_params: { height: 0, width: 0 },
             img_diff: 1,
@@ -52,9 +52,6 @@ export default defineComponent({
                     width: elImg.clientWidth
                 }
 
-                state.crop_position.size = elImg.clientHeight > elImg.clientWidth 
-                    ? elImg.clientWidth 
-                    : elImg.clientHeight;
                 state.crop_position.x = 0;
                 state.crop_position.y = 0;
                 state.img_diff = elImg.naturalHeight / elImg.clientHeight;
@@ -87,8 +84,8 @@ export default defineComponent({
                 if (elImage){
                     const canvas = document.createElement('canvas');
         
-                    canvas.width = elImage.naturalHeight;
-                    canvas.height = elImage.naturalWidth;
+                    canvas.width = state.crop_size * state.img_diff;
+                    canvas.height = state.crop_size * state.img_diff;
         
                     const context = canvas.getContext('2d');
 
@@ -97,12 +94,12 @@ export default defineComponent({
                             elImage, 
                             state.crop_position.x * state.img_diff, 
                             state.crop_position.y * state.img_diff,
-                            state.crop_position.size * state.img_diff,
-                            state.crop_position.size * state.img_diff,
+                            state.crop_size * state.img_diff,
+                            state.crop_size * state.img_diff,
                             0,
                             0,
-                            state.crop_position.size * state.img_diff,
-                            state.crop_position.size * state.img_diff,
+                            state.crop_size * state.img_diff,
+                            state.crop_size * state.img_diff,
                         );
                     }
         
@@ -137,8 +134,8 @@ export default defineComponent({
                 const targetX = state.crop_position.x + moveX;
                 const targetY = state.crop_position.y + moveY;
 
-                const maxX = state.visible_img_params.width - state.crop_position.size;
-                const maxY = state.visible_img_params.height - state.crop_position.size;
+                const maxX = state.visible_img_params.width - state.crop_size;
+                const maxY = state.visible_img_params.height - state.crop_size;
                 
                 if (targetY < 0){
                     state.crop_position.y = 0;
@@ -163,8 +160,6 @@ export default defineComponent({
         }
 
         function fMouseUp(e: MouseEvent) {
-            e.preventDefault();
-            e.stopPropagation();
             state.start_move_point = null;
         }
 
@@ -172,7 +167,7 @@ export default defineComponent({
             if (vm) {
                 const elImg = vm.refs['image'] as HTMLImageElement;
                 state.crop_element = vm.refs['elCrop'] as HTMLDivElement;
-                
+
                 if (elImg) {
                     if (!elImg.onload) {
                         elImg.onload = () => fCalcImgParams();
@@ -181,12 +176,13 @@ export default defineComponent({
                     }
                 }
             }
-            document.addEventListener('resize', fCalcImgParams, { passive: true });
-            document.addEventListener('mouseup', fMouseUp)
+            
+            window.addEventListener('resize', fCalcImgParams, { passive: true });
+            window.addEventListener('mouseup', fMouseUp)
         });
 
         onUnmounted(() => {
-            document.removeEventListener('resize', fCalcImgParams)
+            window.removeEventListener('resize', fCalcImgParams)
         });
 
         function fCloseModal() {
